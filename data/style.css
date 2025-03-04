@@ -1,0 +1,251 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  text-align: center;
+  background-color: #f0f0f0;
+}
+
+.card {
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  border-radius: 5px;
+  padding: 20px;
+  margin: 0 auto 20px;
+  max-width: 600px;
+}
+
+/* Tab Navigation Styles */
+.tab-container {
+  display: flex;
+  justify-content: flex-start;
+  background-color: transparent;
+  margin-bottom: 5px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+}
+
+.tab {
+  padding: 8px 15px;
+  background-color: #e0e0e0;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  margin: 0 10px 0 0;
+  transition: all 0.3s;
+  font-size: 14px;
+  position: relative;
+  z-index: 1;
+  border-radius: 4px;
+  box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+}
+
+.tab:hover {
+  background-color: #d0d0d0;
+}
+
+.tab.active {
+  font-weight: bold;
+  background-color: #2196F3;
+  color: white;
+  border: 1px solid #1976D2;
+}
+
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: #3e8e41;
+}
+
+.button-red {
+  background-color: #f44336;
+}
+
+.button-red:hover {
+  background-color: #d32f2f;
+}
+
+.slider-container {
+  margin: 25px 0;
+}
+
+.slider {
+  width: 90%;
+  height: 40px;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #d3d3d3;
+  outline: none;
+  border-radius: 25px;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 30px;
+  height: 30px;
+  background: #2196F3;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 30px;
+  height: 30px;
+  background: #2196F3;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.control-section {
+  border-top: 1px solid #ddd;
+  margin-top: 20px;
+  padding-top: 20px;
+}
+
+.status-indicator {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.status-red {
+  background-color: #f44336;
+}
+
+.status-green {
+  background-color: #4CAF50;
+}
+
+.sensor-reading {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.sensor-value {
+  color: #2196F3;
+}
+
+.hidden {
+  display: none;
+}
+
+/* I2C Scanner styles */
+.results-section {
+  margin-top: 20px;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 12px;
+  text-align: center;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+#scan-status {
+  font-style: italic;
+  margin: 15px 0;
+}
+
+/* System Info Styles */
+.info-section {
+  margin: 20px 0;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  text-align: left;
+}
+
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+}
+
+.info-table, .info-table th, .info-table td {
+  border: none;
+}
+
+.info-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.info-label {
+  font-weight: bold;
+  width: 35%;
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.info-value {
+  padding: 6px 10px;
+  text-align: right;
+  font-family: monospace;
+  font-size: 1.1em;
+}
+
+/* Progress bar for resource usage */
+.progress-container {
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  height: 15px;
+  width: 100%;
+  margin: 5px 0;
+}
+
+.progress-bar {
+  height: 15px;
+  border-radius: 10px;
+  background-color: #2196F3;
+}
+
+.progress-text {
+  font-size: 0.8em;
+  margin-top: 2px;
+  text-align: center;
+}
+
+#refresh-sysinfo {
+  margin-top: 15px;
+}

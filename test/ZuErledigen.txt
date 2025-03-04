@@ -1,0 +1,28 @@
+Fehler:
+- Der I2C Scanner funktioniert nicht. Er zählt die ersten fünf Adressen hoch. Das macht
+  er sehr langsam. Danach führt der ESP allem Anschein nach einen Reset durch.
+
+- Der Schieberegler funktioniert nur wenn man ihn antippt. Wenn man den Regler tatsächlich
+  schiebt, dann werden auf der Konsole noch 2 Werte ausgegeben und die Ausgabe friert ein.
+  Auch der Status der LED kann nicht mehr geändert werden. Weder auf im Browser noch auf
+  dem Microcontroller.
+  Danach kann man die Konsole neu starten und den Browser aktualisieren. Dann funktioniert
+  sowohl die Ansteuerung der LED, als auch das Antippen des Schiebereglers.
+  Messung machen, wie sich der Analogausgang verhält
+
+Optimierungen:
+- Die LED Schaltflächen zu einer Schaltfläche mit Toggle-Funtkion zusammenfassen.
+  Die Farbe dieser Schaltfläche entspricht dem Status der LED. Die Textzeile mit 
+  der Statusausgabe entfällt.
+
+- Die Schaltflächen zum Umschalten der Webseiten sollen mehr wie die Tabs eines Browsers
+  aussehen. Also enger zusammen und näher an die weiße Anzeigefläche. Am besten komplett
+  in diese Fläche integriert.
+
+
+Testen:
+- Wird die Anzeige "No other clients connected" grün, wenn mehr als ein Client verbunden
+  ist?
+  Ein zweiter Client wird erkannt. Die LED wird grün, aber der Text wird zu "Connected".
+  Richtiger ist "Other Client(s) connected". Korrigieren!
+  Text ist angepasst -> testen 

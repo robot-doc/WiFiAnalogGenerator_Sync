@@ -1,0 +1,18 @@
+esp32-feather-ap/
+├── platformio.ini
+├── src/
+│   ├── main.cpp                 # Main program file
+│   ├── config.h                 # Configuration and pin definitions
+│   ├── dac_control.h            # DAC control functions
+│   ├── dac_control.cpp
+│   ├── dht_sensor.h             # DHT sensor functions
+│   ├── dht_sensor.cpp
+│   ├── neopixel_manager.h       # NeoPixel control functions
+│   ├── neopixel_manager.cpp
+│   ├── webserver.h              # Webserver setup and route handlers
+│   ├── webserver.cpp
+├── data/                        # Files for SPIFFS file system
+│   ├── index.html               # Main web interface
+│   ├── style.css                # Stylesheet
+│   └── script.js                # JavaScript for the web interface
+└── include/ 
