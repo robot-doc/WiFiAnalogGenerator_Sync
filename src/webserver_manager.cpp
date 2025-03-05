@@ -1,17 +1,21 @@
 // webserver_manager.cpp
+#include <Arduino.h>
 #include "webserver_manager.h"
+#include "ethernet_controller.h"
 #include "config.h"
 #include <WiFi.h>
 #include <ArduinoJson.h>
 
 WebServerManager::WebServerManager(int port, DHTSensor *dhtSensor, DACControl *dacControl,
                                    I2CScanner *i2cScanner, SystemInfo *systemInfo,
-                                   BatteryManager *batteryManager) : server(port),
+                                   BatteryManager *batteryManager,
+                                   EthernetController *ethernetController) : server(port),
                                                                      dhtSensor(dhtSensor),
                                                                      dacControl(dacControl),
                                                                      i2cScanner(i2cScanner),
                                                                      systemInfo(systemInfo),
-                                                                     batteryManager(batteryManager)
+                                                                     batteryManager(batteryManager),
+                                                                     ethernetController(ethernetController)
 {
     // Constructor body can be empty or have initialization code
 }
@@ -35,6 +39,12 @@ void WebServerManager::begin()
               { this->handleJavaScriptFile("/tabModule.js"); });
     server.on("/main.js", HTTP_GET, [this]()
               { this->handleJavaScriptFile("/main.js"); });
+    server.on("/api/ethernet/status", HTTP_GET, [this]()
+              { this->handleEthernetStatus(); });
+    server.on("/ethernet/config", HTTP_POST, [this]()
+              { this->handleEthernetConfig(); });
+    server.on("/ethernetModule.js", HTTP_GET, [this]()
+              { this->handleJavaScriptFile("/ethernetModule.js"); });
 
     // API routes
     server.on("/led", HTTP_GET, [this]()
@@ -188,20 +198,128 @@ void WebServerManager::handleSystemInfo()
     server.send(200, "application/json", jsonResponse);
 }
 
-void WebServerManager::handleDebug() {
+void WebServerManager::handleEthernetStatus()
+{
+    Serial.println("[WebServer] Ethernet status requested");
+
+    if (ethernetController != nullptr)
+    {
+        String statusJson = ethernetController->getStatusJSON();
+        Serial.print("[WebServer] Ethernet status: ");
+        Serial.println(statusJson);
+
+        server.send(200, "application/json", statusJson);
+    }
+    else
+    {
+        server.send(503, "application/json", "{\"error\":\"Ethernet controller not available\"}");
+    }
+}
+
+void WebServerManager::handleEthernetConfig()
+{
+    Serial.println("[WebServer] Ethernet configuration update requested");
+
+    if (ethernetController == nullptr)
+    {
+        server.send(503, "application/json", "{\"success\":false,\"error\":\"Ethernet controller not available\"}");
+        return;
+    }
+
+    if (server.hasArg("plain"))
+    {
+        String body = server.arg("plain");
+        DynamicJsonDocument doc(512);
+        DeserializationError error = deserializeJson(doc, body);
+
+        if (error)
+        {
+            String errorMsg = "{\"success\":false,\"error\":\"JSON parsing failed: ";
+            errorMsg += error.c_str();
+            errorMsg += "\"}";
+            server.send(400, "application/json", errorMsg);
+            return;
+        }
+
+        // Extract and validate IP addresses
+        IPAddress newIp, newGateway, newSubnet, newDns;
+        bool valid = true;
+
+        if (doc.containsKey("ip"))
+        {
+            valid = valid && newIp.fromString(doc["ip"].as<String>());
+        }
+        else
+        {
+            newIp = ethernetController->getIP();
+        }
+
+        if (doc.containsKey("gateway"))
+        {
+            valid = valid && newGateway.fromString(doc["gateway"].as<String>());
+        }
+        else
+        {
+            newGateway = ethernetController->getGateway();
+        }
+
+        if (doc.containsKey("subnet"))
+        {
+            valid = valid && newSubnet.fromString(doc["subnet"].as<String>());
+        }
+        else
+        {
+            newSubnet = ethernetController->getSubnet();
+        }
+
+        if (doc.containsKey("dns"))
+        {
+            valid = valid && newDns.fromString(doc["dns"].as<String>());
+        }
+        else
+        {
+            newDns = ethernetController->getDns();
+        }
+
+        if (!valid)
+        {
+            server.send(400, "application/json", "{\"success\":false,\"error\":\"Invalid IP address format\"}");
+            return;
+        }
+
+        // Update configuration
+        if (ethernetController->updateConfig(newIp, newGateway, newSubnet, newDns))
+        {
+            server.send(200, "application/json", "{\"success\":true,\"message\":\"Configuration saved. Please restart the device for changes to take effect.\"}");
+        }
+        else
+        {
+            server.send(500, "application/json", "{\"success\":false,\"error\":\"Failed to save configuration\"}");
+        }
+    }
+    else
+    {
+        server.send(400, "application/json", "{\"success\":false,\"error\":\"Missing request body\"}");
+    }
+}
+
+// Also modify the debug handler to include Ethernet routes
+void WebServerManager::handleDebug()
+{
     String output = "<html><body><h1>SPIFFS Debug Info</h1>";
-    
+
     // List all files
     output += "<h2>Files in SPIFFS:</h2><ul>";
     File root = SPIFFS.open("/");
     File file = root.openNextFile();
-    
-    while (file) {
-      output += "<li>" + String(file.name()) + " (" + String(file.size()) + " bytes)</li>";
-      file = root.openNextFile();
+
+    while (file)
+    {
+        output += "<li>" + String(file.name()) + " (" + String(file.size()) + " bytes)</li>";
+        file = root.openNextFile();
     }
     output += "</ul>";
-    
+
     // List registered server routes
     output += "<h2>Web Server Routes:</h2><ul>";
     output += "<li>/</li>";
@@ -220,16 +338,35 @@ void WebServerManager::handleDebug() {
     output += "<li>/sysInfoModule.js</li>";
     output += "<li>/tabModule.js</li>";
     output += "<li>/main.js</li>";
+    output += "<li>/ethernetModule.js</li>";   // Add this new route
+    output += "<li>/api/ethernet/status</li>"; // Add this new route
+    output += "<li>/ethernet/config</li>";     // Add this new route
     output += "</ul>";
-    
+
+    // Also add Ethernet status to the debug info
+    if (ethernetController != nullptr && ethernetController->isConnected())
+    {
+        output += "<h2>Ethernet Status:</h2>";
+        output += "<p>Connected: Yes</p>";
+        output += "<p>IP: " + ethernetController->getIP().toString() + "</p>";
+        output += "<p>Gateway: " + ethernetController->getGateway().toString() + "</p>";
+        output += "<p>Subnet: " + ethernetController->getSubnet().toString() + "</p>";
+        output += "<p>DNS: " + ethernetController->getDns().toString() + "</p>";
+    }
+    else
+    {
+        output += "<h2>Ethernet Status:</h2>";
+        output += "<p>Connected: No</p>";
+    }
+
     // Show some general system info
     output += "<h2>System Info:</h2>";
     output += "<p>Free Heap: " + String(ESP.getFreeHeap()) + " bytes</p>";
     output += "<p>ESP SDK: " + String(ESP.getSdkVersion()) + "</p>";
     output += "<p>Uptime: " + String(millis() / 1000) + " seconds</p>";
     output += "<p>Flash Size: " + String(ESP.getFlashChipSize() / (1024 * 1024)) + " MB</p>";
-    
+
     output += "</body></html>";
-    
+
     server.send(200, "text/html", output);
-  }
+}

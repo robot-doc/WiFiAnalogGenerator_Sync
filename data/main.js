@@ -9,12 +9,14 @@ window.onload = function () {
       controlModule.initialize();
       scannerModule.initialize();
       sysInfoModule.initialize();
+      ethernetModule.initialize();
       
       // Start polling for connection status and sensor readings
       controlModule.updateSensorReadings(); // Initial reading
       console.log("Setting up polling...");
       setInterval(controlModule.updateConnectionStatus, 2000);
       setInterval(controlModule.updateSensorReadings, 2000);
+      setInterval(ethernetModule.getEthernetStatus, 2000);
       
       // Initialize tab navigation
       tabModule.initialize();

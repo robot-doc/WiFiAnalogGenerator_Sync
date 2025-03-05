@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "config.h"
 
 // Define the global variables that were declared as extern in config.h

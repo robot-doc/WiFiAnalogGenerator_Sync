@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "i2c_scanner.h"
 
 I2CScanner::I2CScanner() : scanComplete(false)

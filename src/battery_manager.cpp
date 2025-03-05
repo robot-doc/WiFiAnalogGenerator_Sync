@@ -1,6 +1,7 @@
 // battery_manager.cpp
-#include "battery_manager.h"
 #include <Arduino.h>
+#include "battery_manager.h"
+
 
 BatteryManager::BatteryManager() : 
   lastVoltage(0),

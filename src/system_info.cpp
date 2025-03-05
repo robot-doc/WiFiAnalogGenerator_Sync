@@ -1,4 +1,5 @@
 // system_info.cpp - with improved flash size formatting
+#include <Arduino.h>
 #include "system_info.h"
 #include <WiFi.h>
 #include <ArduinoJson.h>

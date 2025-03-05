@@ -11,6 +11,7 @@
   <script src="scannerModule.js"></script>
   <script src="sysInfoModule.js"></script>
   <script src="tabModule.js"></script>
+  <script src="ethernetModule.js"></script>
   <script src="main.js"></script>
 </head>
 
@@ -19,6 +20,7 @@
     <div class="tab active" data-tab="controls">Controls</div>
     <div class="tab" data-tab="scanner">I2C Scanner</div>
     <div class="tab" data-tab="sysinfo">System Info</div>
+    <div class="tab" data-tab="ethernet">Ethernet</div>
   </div>
 
   <div class="card" id="controls-panel">
@@ -182,6 +184,69 @@
       </table>
     </div>
   </div>
+
+  <div class="card hidden" id="ethernet-panel">
+    <h1>Ethernet Configuration</h1>
+    <p>Configure the Ethernet connection settings for the ESP32-S2 Feather with W5500 Ethernet FeatherWing.</p>
+
+    <div class="info-section">
+      <h3>Connection Status</h3>
+      <div class="connection-status">
+        <p><span id="ethernet-connection-status" class="status-indicator status-red"></span> <span
+            id="ethernet-connection-text">Disconnected</span></p>
+      </div>
+      <table class="info-table">
+        <tr>
+          <td class="info-label">IP Address:</td>
+          <td id="ethernet-ip-address" class="info-value">--</td>
+        </tr>
+        <tr>
+          <td class="info-label">Subnet Mask:</td>
+          <td id="ethernet-subnet-mask" class="info-value">--</td>
+        </tr>
+        <tr>
+          <td class="info-label">Gateway:</td>
+          <td id="ethernet-gateway" class="info-value">--</td>
+        </tr>
+        <tr>
+          <td class="info-label">DNS Server:</td>
+          <td id="ethernet-dns-server" class="info-value">--</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="info-section">
+      <h3>Network Configuration</h3>
+      <div class="control-section">
+        <div class="form-group">
+          <label for="ethernet-ip">IP Address:</label>
+          <input type="text" id="ethernet-ip" name="ip"
+            pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
+        </div>
+        <div class="form-group">
+          <label for="ethernet-subnet">Subnet Mask:</label>
+          <input type="text" id="ethernet-subnet" name="subnet"
+            pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
+        </div>
+        <div class="form-group">
+          <label for="ethernet-gateway">Gateway:</label>
+          <input type="text" id="ethernet-gateway" name="gateway"
+            pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
+        </div>
+        <div class="form-group">
+          <label for="ethernet-dns">DNS Server:</label>
+          <input type="text" id="ethernet-dns" name="dns"
+            pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
+        </div>
+        <div class="button-container">
+          <button id="ethernet-save-button" class="button">Save Configuration</button>
+          <button id="ethernet-refresh-button" class="button">Refresh Status</button>
+        </div>
+        <div id="ethernet-message" style="display: none;"></div>
+      </div>
+    </div>
+  </div>
+
 </body>
 
 </html>
