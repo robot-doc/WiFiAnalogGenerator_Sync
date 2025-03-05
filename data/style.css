@@ -145,7 +145,7 @@ body {
 }
 
 .hidden {
-  display: none;
+  display: none !important; /* Added !important to override any other styles */
 }
 
 /* I2C Scanner styles */
@@ -260,6 +260,7 @@ tr:hover {
   display: inline-block;
   width: 120px;
   font-weight: bold;
+  font-size: 1em;
 }
 
 .form-group input[type="text"] {
@@ -268,6 +269,8 @@ tr:hover {
   border: 1px solid #ccc;
   border-radius: 4px;
   font-family: monospace;
+  font-size: 1.1em;  /* Increase font size */
+  font-weight: normal; /* Match weight of label text */
 }
 
 .button-container {

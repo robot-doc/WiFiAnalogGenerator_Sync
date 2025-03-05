@@ -1,6 +1,11 @@
 // ethernetModule.js - Ethernet controller functionality
 
 const ethernetModule = {
+    // Flag to track if user is editing the form
+    isUserEditing: false,
+    // Flag to track if user has made changes
+    hasUserChanges: false,
+
     initialize: function () {
         console.log("Initializing ethernet module...");
         this.getEthernetStatus();
@@ -8,6 +13,71 @@ const ethernetModule = {
         // Set up event handlers if elements exist
         const refreshButton = document.getElementById('ethernet-refresh-button');
         const saveButton = document.getElementById('ethernet-save-button');
+
+        // Get input elements
+        const ipInput = document.getElementById('ethernet-ip');
+        const subnetInput = document.getElementById('ethernet-subnet');
+        const gatewayInput = document.getElementById('ethernet-gateway');
+        const dnsInput = document.getElementById('ethernet-dns');
+
+        // Add focus and blur event listeners to track when user is editing
+        if (ipInput) {
+            ipInput.addEventListener('focus', () => { this.isUserEditing = true; });
+            ipInput.addEventListener('blur', () => {
+                // Short delay to allow for potential click on other inputs
+                setTimeout(() => {
+                    // Only set to false if no input has focus
+                    if (document.activeElement !== ipInput &&
+                        document.activeElement !== subnetInput &&
+                        document.activeElement !== gatewayInput &&
+                        document.activeElement !== dnsInput) {
+                        this.isUserEditing = false;
+                    }
+                }, 100);
+            });
+        }
+
+        if (subnetInput) {
+            subnetInput.addEventListener('focus', () => { this.isUserEditing = true; });
+            subnetInput.addEventListener('blur', () => {
+                setTimeout(() => {
+                    if (document.activeElement !== ipInput &&
+                        document.activeElement !== subnetInput &&
+                        document.activeElement !== gatewayInput &&
+                        document.activeElement !== dnsInput) {
+                        this.isUserEditing = false;
+                    }
+                }, 100);
+            });
+        }
+
+        if (gatewayInput) {
+            gatewayInput.addEventListener('focus', () => { this.isUserEditing = true; });
+            gatewayInput.addEventListener('blur', () => {
+                setTimeout(() => {
+                    if (document.activeElement !== ipInput &&
+                        document.activeElement !== subnetInput &&
+                        document.activeElement !== gatewayInput &&
+                        document.activeElement !== dnsInput) {
+                        this.isUserEditing = false;
+                    }
+                }, 100);
+            });
+        }
+
+        if (dnsInput) {
+            dnsInput.addEventListener('focus', () => { this.isUserEditing = true; });
+            dnsInput.addEventListener('blur', () => {
+                setTimeout(() => {
+                    if (document.activeElement !== ipInput &&
+                        document.activeElement !== subnetInput &&
+                        document.activeElement !== gatewayInput &&
+                        document.activeElement !== dnsInput) {
+                        this.isUserEditing = false;
+                    }
+                }, 100);
+            });
+        }
 
         if (refreshButton) {
             refreshButton.addEventListener('click', this.getEthernetStatus.bind(this));
@@ -19,6 +89,35 @@ const ethernetModule = {
             saveButton.addEventListener('click', this.saveEthernetConfig.bind(this));
         } else {
             console.error("Ethernet save button NOT found in DOM - check HTML structure");
+        }
+
+        // Add "change" event listeners to detect when user makes changes
+        if (ipInput) {
+            ipInput.addEventListener('change', () => { this.hasUserChanges = true; });
+            // existing focus listener...
+        }
+
+        if (subnetInput) {
+            subnetInput.addEventListener('change', () => { this.hasUserChanges = true; });
+            // existing focus listener...
+        }
+
+        if (gatewayInput) {
+            gatewayInput.addEventListener('change', () => { this.hasUserChanges = true; });
+            // existing focus listener...
+        }
+
+        if (dnsInput) {
+            dnsInput.addEventListener('change', () => { this.hasUserChanges = true; });
+            // existing focus listener...
+        }
+
+        // Add a handler for the save button to clear the hasUserChanges flag
+        if (saveButton) {
+            saveButton.addEventListener('click', () => {
+                this.saveEthernetConfig();
+                this.hasUserChanges = false; // Clear the flag after saving
+            });
         }
     },
 
@@ -88,6 +187,11 @@ const ethernetModule = {
 
     // Fill configuration form with current values
     populateConfigForm: function (data) {
+        // If user is currently editing, don't change the values
+        if (this.isUserEditing || this.hasUserChanges) {
+            return;
+        }
+
         const ipInput = document.getElementById('ethernet-ip');
         const subnetInput = document.getElementById('ethernet-subnet');
         const gatewayInput = document.getElementById('ethernet-gateway');

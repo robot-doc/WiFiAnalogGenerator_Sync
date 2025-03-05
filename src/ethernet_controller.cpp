@@ -51,6 +51,9 @@ bool EthernetController::begin(int cs_pin, int rst_pin) {
     
     // Initialize Ethernet with CS pin
     Ethernet.init(cs_pin);
+
+    // Set SPI clock divider
+    SPI.setClockDivider(SPI_CLOCK_DIV8);  // Try SPI_CLOCK_DIV4 first
     
     // Start Ethernet connection
     Ethernet.begin(mac, ip, dns, gateway, subnet);
